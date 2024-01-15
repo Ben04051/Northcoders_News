@@ -41,10 +41,28 @@ describe("GET/api", () => {
     });
 })
 
-
-
-
-
+describe("GET/api/articles", () => {
+    test("200: gets all articles, with the body property removed, a commment count added and sorted by date in descending order", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+           const {articles} = body
+           articles.forEach((article) => {
+           expect(typeof article.author).toBe("string")
+           expect(typeof article.title).toBe("string")
+           expect(typeof article.article_id).toBe("number")
+           expect(typeof article.topic).toBe("string")
+           expect(typeof article.created_at).toBe("string")
+           expect(typeof article.votes).toBe("number")
+           expect(typeof article.article_img_url).toBe("string")
+           expect(typeof article.comment_count).toBe("number")
+           expect(Object.keys(article).length).toBe(8)
+        })
+          expect(articles).toBeSortedBy("created_at", {descending: true})
+        });
+    });
+})
 
 describe("GET/api/articles/:article_id", () => {
     test("200: gets an article by its article id and returns the object with the correct properties", () => {
