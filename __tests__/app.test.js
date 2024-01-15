@@ -64,6 +64,44 @@ describe("GET/api/articles", () => {
     });
 })
 
+describe("GET/api/articles/:article_id/comments", () => {
+    test("200: gets all comments when given a specific article_id with most recent comments passed first", () => {
+      return request(app)
+        .get("/api/articles/1/comments")
+        .expect(200)
+        .then(({ body }) => {
+           const {comments} = body
+           const testComment = comments[0]
+           expect(testComment.comment_id).toBe(5)
+           expect(testComment.votes).toBe(0)
+           expect(testComment.created_at).toBe("2020-11-03T21:00:00.000Z")
+           expect(testComment.author).toBe("icellusedkars")
+           expect(testComment.body).toBe('I hate streaming noses')
+           expect(testComment.article_id).toBe(1)
+           expect(comments.length).toBe(11)
+           expect(comments).toBeSortedBy("created_at", {descending: true})
+        });
+    });
+    test("400: test that when given an invalid id that bad request is returned", () => {
+        return request(app)
+          .get("/api/articles/thatarticleiwant/comments")
+          .expect(400)
+          .then(({ body }) => {
+             expect(body.msg).toBe("Bad request")
+          });
+      });
+    test("404: test that when given a valid but out of range id that \"404: article not found\" is returned", () => {
+    return request(app)
+        .get("/api/articles/99/comments")
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe("404: article not found")
+        });
+    });
+})
+
+
+
 describe("GET/api/articles/:article_id", () => {
     test("200: gets an article by its article id and returns the object with the correct properties", () => {
       return request(app)
