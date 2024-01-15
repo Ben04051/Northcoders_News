@@ -1,7 +1,7 @@
 const express = require("express")
 const {getAllTopics} = require("./controllers/topics.controllers")
 const {getEndpointDescriptions, handleIncorrectPath} = require("./controllers/endpoint.controllers") 
-const {getArticle} = require("./controllers/articles.controllers")
+const {getArticle, getAllArticles} = require("./controllers/articles.controllers")
 
 const app = express()
 
@@ -12,6 +12,8 @@ app.get("/api", getEndpointDescriptions)
 app.get("/api/topics", getAllTopics)
 
 app.get("/api/articles/:article_id", getArticle)
+
+app.get("/api/articles", getAllArticles)
 
 app.all('*', handleIncorrectPath)
 
