@@ -41,6 +41,42 @@ describe("GET/api", () => {
     });
 })
 
+describe("GET/api/articles/:article_id", () => {
+    test("200: gets an article by its article id and returns the object with the correct properties", () => {
+      return request(app)
+        .get("/api/articles/1")
+        .expect(200)
+        .then(({ body }) => {
+           const {article} = body
+           expect(typeof article.author).toBe("string")
+           expect(typeof article.title).toBe("string")
+           expect(typeof article.article_id).toBe("number")
+           expect(typeof article.body).toBe("string")
+           expect(typeof article.topic).toBe("string")
+           expect(typeof article.created_at).toBe("string")
+           expect(typeof article.votes).toBe("number")
+           expect(typeof article.author).toBe("string")
+        });
+    });
+    test("400: test that when given an invalid id that bad request is returned", () => {
+        return request(app)
+          .get("/api/articles/thatarticleiwant")
+          .expect(400)
+          .then(({ body }) => {
+             expect(body.msg).toBe("Bad request")
+          });
+      });
+    test("404: test that when given a valid but out of range id that \"404: article not found\" is returned", () => {
+    return request(app)
+        .get("/api/articles/99")
+        .expect(404)
+        .then(({ body }) => {
+            expect(body.msg).toBe("404: article not found")
+        });
+    });
+})
+
+
 describe("GET/non-existent API", () => {
     test("404: will return a 404 error when given an incorrect endpoint that a 404 and error message will be returned", () => {
       return request(app)
@@ -49,6 +85,5 @@ describe("GET/non-existent API", () => {
         .then(({body}) => {
             expect(body.msg).toBe("404: endpoint not found")
         })
-       
         });
     });
