@@ -13,12 +13,12 @@ describe("GET /api/topics", () => {
         .get("/api/topics")
         .expect(200)
         .then(({ body }) => {
-          const topics = body;
+          const {topics } = body;
           topics.forEach((topic) => {
             expect(typeof topic.slug).toBe("string");
             expect(typeof topic.description).toBe("string");
-            expect(Object.keys(topic).length).toBe(2)
           });
+          expect(topics.length).toBeGreaterThan(0)
         });
     });
 })
@@ -29,8 +29,9 @@ describe("GET/api", () => {
         .get("/api")
         .expect(200)
         .then(({ body }) => {
-          for (const key in body){
-            const endpoint = (body[key])
+           const {endpoints} = body
+          for (const key in endpoints){
+            const endpoint = (endpoints[key])
             expect(typeof endpoint.description).toBe("string")
             expect(typeof endpoint.queries).toBe("object")
             expect(typeof endpoint.format).toBe("string")
@@ -39,3 +40,15 @@ describe("GET/api", () => {
         });
     });
 })
+
+describe("GET/non-existent API", () => {
+    test("404: will return a 404 error when given an incorrect endpoint that a 404 and error message will be returned", () => {
+      return request(app)
+        .get("/api/thiswillneverbeafilepath")
+        .expect(404)
+        .then(({body}) => {
+            expect(body.msg).toBe("404: endpoint not found")
+        })
+       
+        });
+    });
