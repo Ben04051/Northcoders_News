@@ -7,7 +7,7 @@ const request = require("supertest")
 beforeAll(() => seed(data))
 afterAll(() => db.end())
 
-describe("GET/topics", () => {
+describe("GET /api/topics", () => {
     test("200: Should respond with all topics in an array of objects containing the properties slug and description", () => {
       return request(app)
         .get("/api/topics")
@@ -21,5 +21,21 @@ describe("GET/topics", () => {
           });
         });
     });
+})
 
+describe("GET/api", () => {
+    test("200: serves up a json representation of all the available endpoints of the api", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then(({ body }) => {
+          for (const key in body){
+            const endpoint = (body[key])
+            expect(typeof endpoint.description).toBe("string")
+            expect(typeof endpoint.queries).toBe("object")
+            expect(typeof endpoint.format).toBe("string")
+            expect(Object.keys(endpoint).length).toBe(4)
+          }
+        });
+    });
 })
