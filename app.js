@@ -2,7 +2,7 @@ const express = require("express")
 const {getAllTopics} = require("./controllers/topics.controllers")
 const {getEndpointDescriptions, handleIncorrectPath} = require("./controllers/endpoint.controllers") 
 const {getArticle, getAllArticles} = require("./controllers/articles.controllers")
-const {getArticleComments} = require("./controllers/comments.controllers")
+const {getArticleComments, postComment} = require("./controllers/comments.controllers")
 
 const app = express()
 
@@ -18,6 +18,8 @@ app.get("/api/articles", getAllArticles)
 
 app.get("/api/articles/:article_id/comments", getArticleComments)
 
+app.post("/api/articles/:article_id/comments", postComment)
+
 app.all('*', handleIncorrectPath)
 
 app.use((err, req, res, next) => {
@@ -28,7 +30,14 @@ app.use((err, req, res, next) => {
     }
 })
 app.use((err, req, res, next) => {
-    if (err.code === "22P02") {
+    if (err.code === "23503") {
+        res.status(404).send({msg: '404: not found'})
+    } else {
+        next(err)
+    }
+})
+app.use((err, req, res, next) => {
+    if (err.code === "22P02" || err.code === "23502") {
         res.status(400).send({msg: 'Bad request'})
     } else {
         next(err)
