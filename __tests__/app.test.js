@@ -138,6 +138,8 @@ describe("GET/api/articles/:article_id", () => {
 })
 
 
+
+
 describe("GET/non-existent API", () => {
     test("404: will return a 404 error when given an incorrect endpoint that a 404 and error message will be returned", () => {
       return request(app)
@@ -148,3 +150,92 @@ describe("GET/non-existent API", () => {
         })
         });
     });
+
+    describe('POST/api/articles/:article_id/comments', () => {
+        test('201: inserts a new comment to a given article and returns the posted comment', () => {
+          const commentToAdd = {
+            username: "butter_bridge",
+            body: "Interesting article!"
+          }  
+          return request(app)
+          .post("/api/articles/1/comments")
+          .send(commentToAdd)
+          .expect(201)
+          .then(({body}) => {
+            const {comment} = body
+            expect(typeof comment.comment_id).toBe("number")
+            expect(comment.body).toBe(commentToAdd.body)
+            expect(comment.article_id).toBe(1)
+            expect(comment.author).toBe(commentToAdd.username)
+            expect(comment.votes).toBe(0)
+            expect(typeof comment.created_at).toBe("string")
+          })
+        })
+        test("400: test that when given an invalid article_id that bad request is returned", () => {
+          const commentToAdd = {
+            username: "butter_bridge",
+            body: "Interesting article!"
+          }            
+          return request(app)
+          .post("/api/articles/nevervalidid/comments")
+          .send(commentToAdd)
+          .expect(400)
+          .then(({body}) => {
+               expect(body.msg).toBe("Bad request")
+            });
+        });
+      test("404: test that when given a valid but out of range article_id that \"404: not found\" is returned", () => {
+        const commentToAdd = {
+          username: "butter_bridge",
+          body: "Interesting article!"
+        }      
+        return request(app)
+        .post("/api/articles/99/comments")
+        .send(commentToAdd)
+        .expect(404)
+        .then(({body}) => {
+              expect(body.msg).toBe("404: not found")
+          });
+      });
+      test("404: test that when given an invalid username that not found is returned", () => {
+        const commentToAdd = {
+          username: "butter_bridge1234",
+          body: "Interesting article!"
+        }            
+        return request(app)
+        .post("/api/articles/1/comments")
+        .send(commentToAdd)
+        .expect(404)
+        .then(({body}) => {
+             expect(body.msg).toBe("404: not found")
+          });
+      });
+    test("400: test that when body is missing from the post request that a Bad request error is returned", () => {
+      const commentToAdd = {
+        username: "butter_bridge",
+      }      
+      return request(app)
+      .post("/api/articles/1/comments")
+      .send(commentToAdd)
+      .expect(400)
+      .then(({body}) => {
+            expect(body.msg).toBe("Bad request")
+        });
+    });
+    test("400: test that when username is missing from the post request that a Bad request error is returned", () => {
+      const commentToAdd = {
+        body: "Interesting article!"
+      }      
+      return request(app)
+      .post("/api/articles/1/comments")
+      .send(commentToAdd)
+      .expect(400)
+      .then(({body}) => {
+            expect(body.msg).toBe("Bad request")
+        });
+    });
+  })
+
+ 
+
+

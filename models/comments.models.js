@@ -19,3 +19,13 @@ return db.query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
 
 }
 
+exports.createComment = (username, body, article_id) => {
+    return db.query(`
+    INSERT INTO comments (body, article_id, author)
+    VALUES ($1, $2, $3)
+    RETURNING *`, [body, article_id, username]).then(({rows}) => {
+        return rows[0]
+    })
+
+}
+
