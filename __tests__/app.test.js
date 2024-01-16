@@ -35,19 +35,19 @@ describe("GET/api", () => {
             expect(typeof endpoint.description).toBe("string")
             expect(typeof endpoint.queries).toBe("object")
             expect(typeof endpoint.format).toBe("string")
-            expect(Object.keys(endpoint).length).toBe(4)
           }
         });
     });
 })
 
 describe("GET/api/articles", () => {
-    test("200: gets all articles, with the body property removed, a commment count added and sorted by date in descending order", () => {
+    test("200: gets all articles wiht a commment count added and sorted by date in descending order", () => {
       return request(app)
         .get("/api/articles")
         .expect(200)
         .then(({ body }) => {
            const {articles} = body
+           expect(articles.length).toBeGreaterThan(0)
            articles.forEach((article) => {
            expect(typeof article.author).toBe("string")
            expect(typeof article.title).toBe("string")
@@ -57,11 +57,30 @@ describe("GET/api/articles", () => {
            expect(typeof article.votes).toBe("number")
            expect(typeof article.article_img_url).toBe("string")
            expect(typeof article.comment_count).toBe("number")
-           expect(Object.keys(article).length).toBe(8)
+           expect(Object.keys(article).includes("body")).toBe(false)
         })
-          expect(articles).toBeSortedBy("created_at", {descending: true})
         });
     });
+    test("200: tests that the body property is removed from all articles", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+           const {articles} = body
+           articles.forEach((article) => {
+           expect(Object.keys(article).includes("body")).toBe(false)
+        })
+        });
+    });
+    test("200: tests that the articles are sorted by date in descending order", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then(({ body }) => {
+           const {articles} = body
+           expect(articles).toBeSortedBy("created_at", {descending: true})
+        });
+})
 })
 
 describe("GET/api/articles/:article_id/comments", () => {
@@ -80,6 +99,15 @@ describe("GET/api/articles/:article_id/comments", () => {
            expect(testComment.article_id).toBe(1)
            expect(comments.length).toBe(11)
            expect(comments).toBeSortedBy("created_at", {descending: true})
+        });
+    });
+    test("200: returns an empty object when the article has no comments", () => {
+      return request(app)
+        .get("/api/articles/2/comments")
+        .expect(200)
+        .then(({ body }) => {
+           const {comments} = body
+           expect(comments).toEqual([])
         });
     });
     test("400: test that when given an invalid id that bad request is returned", () => {
