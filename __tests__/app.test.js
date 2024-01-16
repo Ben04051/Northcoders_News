@@ -79,9 +79,41 @@ describe("GET/api/articles", () => {
         .then(({ body }) => {
            const {articles} = body
            expect(articles).toBeSortedBy("created_at", {descending: true})
-        });
+        });    
+      }) 
 })
+
+describe("GET/api/articles?topic_query", () => { 
+  test("200: tests that when passed a valid topic filter query that the results served by the get request will be filtered to only include these results", () => {
+    return request(app)
+      .get("/api/articles?topic_query=mitch")
+      .expect(200)
+      .then(({ body }) => {
+          const {articles} = body
+          expect(articles.length).toBe(12)
+          articles.forEach((article) => {
+            expect(article.topic).toBe("mitch")
+          })
+      });    
+  })
+  test("404: tests that when passed an invalid topic filter query that a 404 error will be returned", () => {
+    return request(app)
+      .get("/api/articles?topic_query=99asdfnotatopic")
+      .expect(404)
+      .then(({ body }) => {
+            expect(body.msg).toBe("404: topic not found")
+      });    
+  })
+  test("404: tests that when passed an empty query that a 404 error will be returned", () => {
+    return request(app)
+      .get("/api/articles?topic_query=")
+      .expect(404)
+      .then(({ body }) => {
+            expect(body.msg).toBe("404: topic not found")
+      });    
+  })
 })
+
 
 describe("GET/api/articles/:article_id/comments", () => {
     test("200: gets all comments when given a specific article_id with most recent comments passed first", () => {
