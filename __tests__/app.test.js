@@ -7,39 +7,39 @@ const request = require("supertest")
 beforeAll(() => seed(data))
 afterAll(() => db.end())
 
-describe("GET /api/topics", () => {
-    test("200: Should respond with all topics in an array of objects containing the properties slug and description", () => {
-      return request(app)
-        .get("/api/topics")
-        .expect(200)
-        .then(({ body }) => {
-          const {topics } = body;
-          topics.forEach((topic) => {
-            expect(typeof topic.slug).toBe("string");
-            expect(typeof topic.description).toBe("string");
-          });
-          expect(topics.length).toBeGreaterThan(0)
-        });
-    });
-})
-
 describe("GET/api", () => {
-    test("200: serves up a json representation of all the available endpoints of the api", () => {
-      return request(app)
-        .get("/api")
-        .expect(200)
-        .then(({ body }) => {
-           const {endpoints} = body
-          for (const key in endpoints){
-            const endpoint = (endpoints[key])
-            expect(typeof endpoint.description).toBe("string")
-            expect(typeof endpoint.queries).toBe("object")
-            expect(typeof endpoint.format).toBe("string")
-          }
-        });
-    });
+  test("200: serves up a json representation of all the available endpoints of the api", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+         const {endpoints} = body
+        for (const key in endpoints){
+          const endpoint = (endpoints[key])
+          expect(typeof endpoint.description).toBe("string")
+          expect(typeof endpoint.queries).toBe("object")
+          expect(typeof endpoint.format).toBe("string")
+        }
+      });
+  });
 })
 
+describe("GET /api/topics", () => {
+  test("200: Should respond with all topics in an array of objects containing the properties slug and description", () => {
+    return request(app)
+      .get("/api/topics")
+      .expect(200)
+      .then(({ body }) => {
+        const {topics } = body;
+        topics.forEach((topic) => {
+          expect(typeof topic.slug).toBe("string");
+          expect(typeof topic.description).toBe("string");
+        });
+        expect(topics.length).toBeGreaterThan(0)
+      });
+    });
+  })
+    
 describe("GET/api/articles", () => {
     test("200: gets all articles wiht a commment count added and sorted by date in descending order", () => {
       return request(app)
