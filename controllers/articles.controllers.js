@@ -3,7 +3,8 @@ const {checkTopicExists} = require("../utils.js")
 
 exports.getArticle = (req, res, next) => {
     const {article_id} = req.params
-    return retrieveArticle(article_id).then((article) => {
+    const {comment_count} = req.query
+    return retrieveArticle(article_id, comment_count).then((article) => {
         res.status(200).send({article})
     }).catch((err) => {
         next(err)
