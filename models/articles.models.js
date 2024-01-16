@@ -1,25 +1,11 @@
 const db = require("../db/connection")
 
-exports.retrieveArticle = (article_id, comment_count_query) => {
-    const validCommentCountQueries = ["true", "false"]
-
-    if (!validCommentCountQueries.includes(comment_count_query) && comment_count_query !== undefined){
-        return Promise.reject({code: "22P02"})
-    }
-
-    let queryStr = ``
-    if (comment_count_query === "true"){
-        queryStr += `SELECT articles.*, COUNT(comments.comment_id)::INT AS comment_count FROM articles
-        LEFT JOIN comments ON comments.article_id = articles.article_id
-        WHERE articles.article_id = $1
-        GROUP BY articles.article_id`
-    } else {
-        queryStr += `SELECT * FROM articles
-        WHERE articles.article_id = $1
-       `
-    }
-
-    return db.query(queryStr, [article_id])
+exports.retrieveArticle = (article_id) => {
+ 
+    return db.query(`SELECT articles.*, COUNT(comments.comment_id)::INT AS comment_count FROM articles
+    LEFT JOIN comments ON comments.article_id = articles.article_id
+    WHERE articles.article_id = $1
+    GROUP BY articles.article_id`, [article_id])
     .then(({rows}) => {
         if(rows.length === 0){
             return Promise.reject({status: 404, msg: "404: article not found"})

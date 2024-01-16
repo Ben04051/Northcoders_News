@@ -34,8 +34,8 @@
     }
   },
   "GET /api/articles/:article_id": {
-    "description": "serves a single article object given its id, when the comment_count query is passed as true, the number of comments on the article will be added in a comment count variable",
-    "queries": ["comment_count"],
+    "description": "serves a single article object given its id",
+    "queries": [],
     "format": "object",
     "exampleResponse": {
       "articles": {
@@ -46,7 +46,8 @@
         "body": "I find this existence challenging",
         "created_at": "2020-07-09T20:11:00.000Z",
         "votes": 100,
-        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        "comment_count" : 11
       }
     }
   },

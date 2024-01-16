@@ -175,6 +175,7 @@ describe("GET/api/articles/:article_id", () => {
            expect(typeof article.created_at).toBe("string")
            expect(typeof article.votes).toBe("number")
            expect(typeof article.author).toBe("string")
+           expect(typeof article.comment_count).toBe("number")
         });
     });
     test("400: test that when given an invalid id that bad request is returned", () => {
@@ -191,51 +192,6 @@ describe("GET/api/articles/:article_id", () => {
         .expect(404)
         .then(({ body }) => {
             expect(body.msg).toBe("404: article not found")
-        });
-    });
-})
-
-describe("GET/api/articles/:article_id?comment_count", () => {
-  test("200: gets an article by its article id and returns the object with the correct properties including comment_count when set to true", () => {
-    return request(app)
-      .get("/api/articles/1?comment_count=true")
-      .expect(200)
-      .then(({ body }) => {
-         const {article} = body
-         expect(typeof article.author).toBe("string")
-         expect(typeof article.title).toBe("string")
-         expect(typeof article.article_id).toBe("number")
-         expect(typeof article.body).toBe("string")
-         expect(typeof article.topic).toBe("string")
-         expect(typeof article.created_at).toBe("string")
-         expect(typeof article.votes).toBe("number")
-         expect(typeof article.author).toBe("string")
-         expect(typeof article.comment_count).toBe("number")
-      });
-  });
-  test("200: gets an article by its article id and returns the object with the correct properties excluding comment_count when set to false", () => {
-    return request(app)
-      .get("/api/articles/1?comment_count=false")
-      .expect(200)
-      .then(({ body }) => {
-         const {article} = body
-         expect(typeof article.author).toBe("string")
-         expect(typeof article.title).toBe("string")
-         expect(typeof article.article_id).toBe("number")
-         expect(typeof article.body).toBe("string")
-         expect(typeof article.topic).toBe("string")
-         expect(typeof article.created_at).toBe("string")
-         expect(typeof article.votes).toBe("number")
-         expect(typeof article.author).toBe("string")
-         expect(Object.keys(article).includes("comment_count")).toBe(false)
-      });
-  });
-  test("400: test that when given an invalid query (anything other than true or false) that bad request is returned", () => {
-      return request(app)
-        .get("/api/articles/1?comment_count=fasd")
-        .expect(400)
-        .then(({ body }) => {
-           expect(body.msg).toBe("Bad request")
         });
     });
 })
