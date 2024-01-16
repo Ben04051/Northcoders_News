@@ -165,9 +165,6 @@ describe("GET/api/articles/:article_id", () => {
     });
 })
 
-
-
-
 describe("GET/non-existent API", () => {
     test("404: will return a 404 error when given an incorrect endpoint that a 404 and error message will be returned", () => {
       return request(app)
@@ -263,6 +260,81 @@ describe("GET/non-existent API", () => {
         });
     });
   })
+
+  describe("PATCH/api/articles/:article_id", () => {
+    test("200: test that when given a patch request with an article_id and a body containing a number of votes that the article's votes will be updated", () => {
+      return request(app)
+      .patch("/api/articles/1")
+      .send({inc_votes : 50})
+      .expect(200)
+      .then(({body}) => {
+        const {article} = body
+        expect(article.votes).toEqual(150)
+      }).then(() => {
+        return request(app)
+        .patch("/api/articles/1")
+        .send({inc_votes : -50})
+        .expect(200)
+        //re-setting the votes after each test so that test data isn't affected- not sure if this is good practice
+      })
+    })
+    test("200: test that when the result is a negative number that the article will be returned", () => {
+      return request(app)
+      .patch("/api/articles/1")
+      .send({inc_votes : -300})
+      .expect(200)
+      .then(({body}) => {
+        const {article} = body
+        expect(article.votes).toEqual(-200)
+      }).then(() => {
+        return request(app)
+        .patch("/api/articles/1")
+        .send({inc_votes : 300})
+        .expect(200)
+      })
+    })
+    test("400: test that when given an invalid article_id that bad request is returned", () => {    
+      return request(app)
+      .patch("/api/articles/notavalidid")
+      .send({inc_votes : -300})
+      .expect(400)
+      .then(({body}) => {
+           expect(body.msg).toBe("Bad request")
+        });
+    });
+    test("404: test that when given a valid but out of range article_id that \"404: not found\" is returned", () => {
+      return request(app)
+      .patch("/api/articles/99")
+      .send({inc_votes : -300})
+      .expect(404)
+      .then(({body}) => {
+            expect(body.msg).toBe("404: article not found")
+        });
+    });
+    test("400: test that when given an invalid inc_votes value that bad request will be returned", () => {    
+      return request(app)
+      .patch("/api/articles/1")
+      .send({inc_votes : "hello"})
+      .expect(400)
+      .then(({body}) => {
+           expect(body.msg).toBe("Bad request")
+        });
+    });
+    test("400: test that decimals will not be accepted", () => {    
+      return request(app)
+      .patch("/api/articles/1")
+      .send({inc_votes : 47.5})
+      .expect(400)
+      .then(({body}) => {
+           expect(body.msg).toBe("Bad request")
+        });
+    });
+  })
+
+
+ 
+
+
 
  
 
