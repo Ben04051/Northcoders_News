@@ -1,4 +1,5 @@
 const {retrieveArticle, retrieveAllArticles, amendArticleVotes} = require("../models/articles.models")
+const {checkTopicExists} = require("../utils.js")
 
 exports.getArticle = (req, res, next) => {
     const {article_id} = req.params
@@ -10,7 +11,17 @@ exports.getArticle = (req, res, next) => {
 }
 
 exports.getAllArticles = (req, res, next) => {
-    return retrieveAllArticles().then((articles) => {
+    const {topic_query} = req.query
+    const getArticles = retrieveAllArticles(topic_query)
+    const queries = [getArticles]
+
+    if(topic_query || topic_query === "") {
+        const topicCheck = checkTopicExists(topic_query)
+        queries.push(topicCheck)
+    }
+
+    Promise.all(queries).then((response) => {
+        const articles = response[0]
         res.status(200).send({articles})
     }).catch((err) => {
         next(err)

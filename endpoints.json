@@ -15,7 +15,7 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all articles with body removed and comment_count added- sorted by age in descenging order by default",
+    "description": "serves an array of all articles with body removed and comment_count added- sorted by age in descenging order by default. Can be queried by topic to only select articles relating to a specific topic",
     "queries": ["author", "topic", "sort_by", "order"],
     "format": "array object",
     "exampleResponse": {
