@@ -34,8 +34,8 @@
     }
   },
   "GET /api/articles/:article_id": {
-    "description": "serves a single article object given its id",
-    "queries": [],
+    "description": "serves a single article object given its id, when the comment_count query is passed as true, the number of comments on the article will be added in a comment count variable",
+    "queries": ["comment_count"],
     "format": "object",
     "exampleResponse": {
       "articles": {
