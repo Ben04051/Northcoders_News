@@ -329,6 +329,15 @@ describe("GET/non-existent API", () => {
            expect(body.msg).toBe("Bad request")
         });
     });
+    test("400: test that Bad request is returned when inc_votes is not passed in the body", () => {    
+      return request(app)
+      .patch("/api/articles/1")
+      .send()
+      .expect(400)
+      .then(({body}) => {
+           expect(body.msg).toBe("Bad request")
+        });
+    });
   })
 
   describe("DELETE/api/comments/:comment_id", () => {
