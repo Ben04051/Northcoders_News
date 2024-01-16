@@ -128,8 +128,6 @@ describe("GET/api/articles/:article_id/comments", () => {
     });
 })
 
-
-
 describe("GET/api/articles/:article_id", () => {
     test("200: gets an article by its article id and returns the object with the correct properties", () => {
       return request(app)
@@ -165,6 +163,23 @@ describe("GET/api/articles/:article_id", () => {
     });
 })
 
+describe("GET /api/users", () => {
+  test("200: Should respond with all users in an array of objects containing the properties username, name and avatar_url", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const {users} = body;
+        expect(users.length).toBeGreaterThan(0)
+        users.forEach((user) => {
+          expect(typeof user.username).toBe("string");
+          expect(typeof user.name).toBe("string");
+          expect(typeof user.avatar_url).toBe("string");
+        }); //Do i need to return the users without their id?
+      });
+  });
+})
+
 describe("GET/non-existent API", () => {
     test("404: will return a 404 error when given an incorrect endpoint that a 404 and error message will be returned", () => {
       return request(app)
@@ -176,7 +191,7 @@ describe("GET/non-existent API", () => {
         });
     });
 
-    describe('POST/api/articles/:article_id/comments', () => {
+describe('POST/api/articles/:article_id/comments', () => {
         test('201: inserts a new comment to a given article and returns the posted comment', () => {
           const commentToAdd = {
             username: "butter_bridge",

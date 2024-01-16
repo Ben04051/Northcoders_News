@@ -3,6 +3,7 @@ const {getAllTopics} = require("./controllers/topics.controllers")
 const {getEndpointDescriptions, handleIncorrectPath} = require("./controllers/endpoint.controllers") 
 const {getArticle, getAllArticles, updateArticleVotes} = require("./controllers/articles.controllers")
 const {getArticleComments, postComment, deleteComment} = require("./controllers/comments.controllers")
+const {getAllUsers} = require("./controllers/users.controllers")
 
 const app = express()
 
@@ -17,6 +18,8 @@ app.get("/api/articles/:article_id", getArticle)
 app.get("/api/articles", getAllArticles)
 
 app.get("/api/articles/:article_id/comments", getArticleComments)
+
+app.get ("/api/users", getAllUsers)
 
 app.post("/api/articles/:article_id/comments", postComment)
 
