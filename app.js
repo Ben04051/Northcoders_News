@@ -2,7 +2,7 @@ const express = require("express")
 const {getAllTopics} = require("./controllers/topics.controllers")
 const {getEndpointDescriptions, handleIncorrectPath} = require("./controllers/endpoint.controllers") 
 const {getArticle, getAllArticles, updateArticleVotes} = require("./controllers/articles.controllers")
-const {getArticleComments, postComment} = require("./controllers/comments.controllers")
+const {getArticleComments, postComment, deleteComment} = require("./controllers/comments.controllers")
 
 const app = express()
 
@@ -21,6 +21,8 @@ app.get("/api/articles/:article_id/comments", getArticleComments)
 app.post("/api/articles/:article_id/comments", postComment)
 
 app.patch("/api/articles/:article_id", updateArticleVotes)
+
+app.delete("/api/comments/:comment_id", deleteComment)
 
 app.all('*', handleIncorrectPath)
 
