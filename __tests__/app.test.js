@@ -331,6 +331,31 @@ describe("GET/non-existent API", () => {
     });
   })
 
+  describe("DELETE/api/comments/:comment_id", () => {
+    test("204: test that when given a valid id that the comment is removed", () => {
+      return request(app)
+      .delete("/api/comments/1")
+      .expect(204) 
+    })
+    test("404: test that when given a valid but out of range comment_id that \"404: not found\" is returned", () => {
+      return request(app)
+      .delete("/api/comments/99")
+      .expect(404)
+      .then(({body}) => {
+            expect(body.msg).toBe("404: comment not found")
+        });
+    });
+    test("400: test that when given an invalid comment_id that Bad request is returned", () => {    
+      return request(app)
+      .patch("/api/articles/notavalidcommentid")
+      .expect(400)
+      .then(({body}) => {
+           expect(body.msg).toBe("Bad request")
+        });
+    });
+
+  })
+
 
  
 
