@@ -114,6 +114,62 @@ describe("GET/api/articles?topic_query", () => {
   })
 })
 
+describe("GET/api/articles?sort_by", () => { 
+  test("200: tests that when passed a valid topic filter query that the results served by the get request will be filtered to only include these results", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author")
+      .expect(200)
+      .then(({ body }) => {
+        const {articles} = body
+          expect(articles).toBeSortedBy("author", {descending: true})
+      });    
+  })
+  test("404: tests that when passed an invalid sort_by query that a 404 error will be returned", () => {
+    return request(app)
+      .get("/api/articles?sort_by=99asdfnotatopic")
+      .expect(404)
+      .then(({ body }) => {
+            expect(body.msg).toBe("404: column not found")
+      });    
+  })
+   test("404: tests that when passed an empty query that a 404 error will be returned", () => {
+    return request(app)
+      .get("/api/articles?sort_by=")
+      .expect(404)
+      .then(({ body }) => {
+            expect(body.msg).toBe("404: column not found")
+      });    
+  })
+})
+
+describe("GET/api/articles?order", () => { 
+  test("200: tests that when passed a valid order that it will be returned in that order", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body }) => {
+        const {articles} = body
+          expect(articles).toBeSortedBy("created_at", {descending: false})
+      });    
+  })
+  test("404: tests that when passed an invalid order query that a 400 error will be returned", () => {
+    return request(app)
+      .get("/api/articles?order=99asdfnotatopic")
+      .expect(400)
+      .then(({ body }) => {
+            expect(body.msg).toBe("Bad request")
+      });    
+  })
+   test("404: tests that when passed an empty query that a 400 error will be returned", () => {
+    return request(app)
+      .get("/api/articles?order=")
+      .expect(400)
+      .then(({ body }) => {
+            expect(body.msg).toBe("Bad request")
+      });    
+  })
+})
+
 
 describe("GET/api/articles/:article_id/comments", () => {
     test("200: gets all comments when given a specific article_id with most recent comments passed first", () => {
