@@ -11,8 +11,8 @@ exports.getArticle = (req, res, next) => {
 }
 
 exports.getAllArticles = (req, res, next) => {
-    const {topic_query} = req.query
-    const getArticles = retrieveAllArticles(topic_query)
+    const {topic_query, sort_by,order} = req.query
+    const getArticles = retrieveAllArticles(topic_query, sort_by, order)
     const queries = [getArticles]
 
     if(topic_query || topic_query === "") {
