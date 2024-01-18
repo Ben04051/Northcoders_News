@@ -68,3 +68,17 @@ exports.amendArticleVotes = (article_id, inc_votes) => {
         return rows[0]
     })
 }
+
+exports.createArticle = (author, title, body, topic, article_img_url) => {
+    if(!article_img_url){
+        article_img_url = 'https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700'
+    }
+    return db.query(`
+    INSERT INTO articles (title, topic, author, body, article_img_url)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *`, [title, topic, author,body, article_img_url]).then(({rows}) => {
+        rows[0].comment_count = 0
+        return rows[0]
+    })
+
+}

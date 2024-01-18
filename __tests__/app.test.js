@@ -346,7 +346,7 @@ describe('POST/api/articles/:article_id/comments', () => {
         .send(commentToAdd)
         .expect(404)
         .then(({body}) => {
-              expect(body.msg).toBe("404: not found")
+              expect(body.msg).toBe("404: article_id not found")
           });
       });
       test("404: test that when given an invalid username that not found is returned", () => {
@@ -359,7 +359,7 @@ describe('POST/api/articles/:article_id/comments', () => {
         .send(commentToAdd)
         .expect(404)
         .then(({body}) => {
-             expect(body.msg).toBe("404: not found")
+             expect(body.msg).toBe("404: author not found")
           });
       });
     test("400: test that when body is missing from the post request that a Bad request error is returned", () => {
@@ -570,6 +570,143 @@ describe("PATCH/api/comments/:comment_id", () => {
   });
 })
 
+describe('POST/api/articles/', () => {
+  test('201: inserts a new article to the list of articles', () => {
+    const articleToAdd = {
+      author: "butter_bridge",
+      title: "Post request success",
+      body: "This article was posted to the articles table using a post request!",
+      topic: "mitch",
+      article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+    }  
+    return request(app)
+    .post("/api/articles/")
+    .send(articleToAdd)
+    .expect(201)
+    .then(({body}) => {
+      const {article} = body
+      expect(article.article_id).toBe(14)
+      expect(article.author).toBe(articleToAdd.author)
+      expect(article.title).toBe(articleToAdd.title)
+      expect(article.body).toBe(articleToAdd.body)
+      expect(article.topic).toBe(articleToAdd.topic)
+      expect(article.article_img_url).toBe(articleToAdd.article_img_url)
+      expect(typeof article.votes).toBe("number")
+      expect(typeof article.created_at).toBe("string")
+      expect(typeof article.comment_count).toBe("number")
+    }) 
+  })
+  test('201: test the function works when not passed an article_img_url', () => {
+    const articleToAdd = {
+      author: "butter_bridge",
+      title: "Post request success",
+      body: "This article was posted to the articles table using a post request!",
+      topic: "mitch",
+    }  
+    return request(app)
+    .post("/api/articles/")
+    .send(articleToAdd)
+    .expect(201)
+    .then(({body}) => {
+      const {article} = body
+      expect(article.article_id).toBe(15)
+      expect(article.author).toBe(articleToAdd.author)
+      expect(article.title).toBe(articleToAdd.title)
+      expect(article.body).toBe(articleToAdd.body)
+      expect(article.topic).toBe(articleToAdd.topic)
+      expect(article.article_img_url).toBe('https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700')
+      expect(typeof article.votes).toBe("number")
+      expect(typeof article.created_at).toBe("string")
+      expect(typeof article.comment_count).toBe("number")
+    }) 
+  }) 
+  test("404: test that when passeed an invalid author that 404: author not found is returned", () => {
+  const articleToAdd = {
+    author: "butter_bridge123",
+      title: "Post request success",
+      body: "This article was posted to the articles table using a post request!",
+      topic: "mitch",
+  }            
+  return request(app)
+  .post("/api/articles/")
+  .send(articleToAdd)
+  .expect(404)
+  .then(({body}) => {
+       expect(body.msg).toBe("404: author not found")
+    });
+});
+test("404: test that when passeed an invalid topic that 404: topic not found is returned", () => {
+  const articleToAdd = {
+    author: "butter_bridge",
+      title: "Post request success",
+      body: "This article was posted to the articles table using a post request!",
+      topic: "mitch12",
+  }            
+  return request(app)
+  .post("/api/articles/")
+  .send(articleToAdd)
+  .expect(404)
+  .then(({body}) => {
+       expect(body.msg).toBe("404: topic not found")
+    });
+});
+test("400: test that when topic is missing from the post request that a Bad request error is returned", () => {
+  const articleToAdd = {
+    author: "butter_bridge",
+      title: "Post request success",
+      body: "This article was posted to the articles table using a post request!",
+  }        
+return request(app)
+.post("/api/articles/")
+.send(articleToAdd)
+.expect(400)
+.then(({body}) => {
+      expect(body.msg).toBe("Bad request")
+  });
+});
+test("400: test that when body is missing from the post request that a Bad request error is returned", () => {
+  const articleToAdd = {
+    author: "butter_bridge",
+      title: "Post request success",
+      topic: "mitch",
+  }        
+return request(app)
+.post("/api/articles/")
+.send(articleToAdd)
+.expect(400)
+.then(({body}) => {
+      expect(body.msg).toBe("Bad request")
+  });
+});
+test("400: test that when author is missing from the post request that a Bad request error is returned", () => {
+  const articleToAdd = {
+      title: "Post request success",
+      body: "This article was posted to the articles table using a post request!",
+      topic: "mitch",
+  }        
+return request(app)
+.post("/api/articles/")
+.send(articleToAdd)
+.expect(400)
+.then(({body}) => {
+      expect(body.msg).toBe("Bad request")
+  });
+});
+test("400: test that when title is missing from the post request that a Bad request error is returned", () => {
+  const articleToAdd = {
+    author: "butter_bridge",
+      body: "This article was posted to the articles table using a post request!",
+      topic: "mitch",
+  }        
+return request(app)
+.post("/api/articles/")
+.send(articleToAdd)
+.expect(400)
+.then(({body}) => {
+      expect(body.msg).toBe("Bad request")
+  });
+});
+})
 
  
 
