@@ -265,10 +265,34 @@ describe("GET /api/users", () => {
           expect(typeof user.username).toBe("string");
           expect(typeof user.name).toBe("string");
           expect(typeof user.avatar_url).toBe("string");
-        }); //Do i need to return the users without their id?
+        });
       });
   });
 })
+
+describe("GET /api/users/:username", () => {
+  test("200: Should respond with all users in an array of objects containing the properties username, name and avatar_url", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body }) => {
+        const {user} = body;
+        expect(Object.keys(user).length).toBeGreaterThan(0)
+        expect(user.username).toBe("butter_bridge");
+        expect(user.name).toBe("jonny");
+        expect(user.avatar_url).toBe("https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg");
+      });
+  });
+  test("404: tests that when passed an invalid username that a 404 error will be returned", () => {
+    return request(app)
+      .get("/api/users/90wfjasfkj")
+      .expect(404)
+      .then(({ body }) => {
+            expect(body.msg).toBe("404: username not found")
+      });    
+  })
+})
+
 
 describe("GET/non-existent API", () => {
     test("404: will return a 404 error when given an incorrect endpoint that a 404 and error message will be returned", () => {
