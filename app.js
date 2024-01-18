@@ -1,31 +1,12 @@
 const express = require("express")
-const {getAllTopics} = require("./controllers/topics.controllers")
-const {getEndpointDescriptions, handleIncorrectPath} = require("./controllers/endpoint.controllers") 
-const {getArticle, getAllArticles, updateArticleVotes} = require("./controllers/articles.controllers")
-const {getArticleComments, postComment, deleteComment} = require("./controllers/comments.controllers")
-const {getAllUsers} = require("./controllers/users.controllers")
+const {handleIncorrectPath} = require("./controllers/endpoint.controllers") 
+const apiRouter = require('./routes/api-router')
 
 const app = express()
 
 app.use(express.json())
 
-app.get("/api", getEndpointDescriptions)
-
-app.get("/api/topics", getAllTopics)
-
-app.get("/api/articles/:article_id", getArticle)
-
-app.get("/api/articles", getAllArticles)
-
-app.get("/api/articles/:article_id/comments", getArticleComments)
-
-app.get ("/api/users", getAllUsers)
-
-app.post("/api/articles/:article_id/comments", postComment)
-
-app.patch("/api/articles/:article_id", updateArticleVotes)
-
-app.delete("/api/comments/:comment_id", deleteComment)
+app.use('/api', apiRouter)
 
 app.all('*', handleIncorrectPath)
 

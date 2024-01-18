@@ -14,6 +14,7 @@ describe("GET/api", () => {
       .expect(200)
       .then(({ body }) => {
          const {endpoints} = body
+         expect(Object.keys(endpoints).length).toBeGreaterThan(0)
         for (const key in endpoints){
           const endpoint = (endpoints[key])
           expect(typeof endpoint.description).toBe("string")
