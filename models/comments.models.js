@@ -1,6 +1,12 @@
 const db = require("../db/connection")
 
-exports.retrieveArticleComments = (article_id) => {
+exports.retrieveArticleComments = (article_id, limit, p) => {
+    
+    if(limit === undefined) limit = 10; 
+    if(p === undefined) p = 1 ;
+    if (!/^[1-9]\d*$/.test(limit) || !/^[1-9]\d*$/.test(p)){
+        return Promise.reject({status: 400, msg: "400: Bad Request"})
+    }
 
 return db.query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
 .then(({rows}) => {
@@ -8,11 +14,17 @@ return db.query(`SELECT * FROM articles WHERE article_id = $1`, [article_id])
         return Promise.reject({status: 404, msg: "404: article not found"})
     }
 
+    const offset = (p-1) * limit
+
     return db.query(`SELECT * FROM comments
                         WHERE article_id = $1
                         ORDER BY created_at DESC
+                        LIMIT ${limit} OFFSET ${offset}
                         `, [article_id])
     .then(({rows}) => {
+        if(rows.length === 0){
+            return Promise.reject({status: 404, msg: "404: comments not found"})
+        }
         return rows
     })
     })

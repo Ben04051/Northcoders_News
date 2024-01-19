@@ -179,7 +179,7 @@ describe("GET/api/articles?limit&?p", () => {
 })
 
 describe("GET/api/articles?topic_query", () => { 
-  test("200: tests that when passed a valid topic filter query that the results served by the get request will be filtered to only include these results", () => {
+  test("200: tests that when passed a valid topic filter query that the results served by the get request will be filtered to include these results", () => {
     return request(app)
       .get("/api/articles?topic_query=mitch")
       .expect(200)
@@ -279,17 +279,16 @@ describe("GET/api/articles/:article_id/comments", () => {
            expect(testComment.author).toBe("icellusedkars")
            expect(testComment.body).toBe('I hate streaming noses')
            expect(testComment.article_id).toBe(1)
-           expect(comments.length).toBe(11)
+           expect(comments.length).toBe(10)
            expect(comments).toBeSortedBy("created_at", {descending: true})
         });
     });
-    test("200: returns an empty object when the article has no comments", () => {
+    test("404: returns comments not found when no comments are available on the page", () => {
       return request(app)
         .get("/api/articles/2/comments")
-        .expect(200)
+        .expect(404)
         .then(({ body }) => {
-           const {comments} = body
-           expect(comments).toEqual([])
+           expect(body.msg).toEqual('404: comments not found')
         });
     });
     test("400: test that when given an invalid id that bad request is returned", () => {
@@ -308,6 +307,91 @@ describe("GET/api/articles/:article_id/comments", () => {
             expect(body.msg).toBe("404: article not found")
         });
     });
+})
+
+describe("GET/api/articles/:article_id/comments?limit&?p", () => {
+   test("200: tests that the pagination works", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=10&p=2")
+      .expect(200)
+      .then(({ body }) => {
+         const {comments} = body
+         expect(comments.length).toBe(1)
+      });
+  });
+  test("404: tests that when given a page out of range that a 404 error will be returned ", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5&p=4")
+      .expect(404)
+      .then(({ body }) => {
+       expect(body.msg).toBe("404: comments not found")
+      });
+  });
+  test("400: tests that when given a null limit out of range that a 400 error will be returned ", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=0&p=1")
+      .expect(400)
+      .then(({ body }) => {
+       expect(body.msg).toBe("Bad request")
+      });
+  });
+  test("400: tests that when given a negative limit out of range that a 400 error will be returned ", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=-7&p=1")
+      .expect(400)
+      .then(({ body }) => {
+       expect(body.msg).toBe("Bad request")
+      });
+  });
+  test("400: tests that when given a decimal integer limit that a 400 error will be returned ", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=7.5")
+      .expect(400)
+      .then(({ body }) => {
+       expect(body.msg).toBe("Bad request")
+      });
+  });
+  test("400: tests that when given a decimal integer p that a 400 error will be returned ", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=1.5")
+      .expect(400)
+      .then(({ body }) => {
+       expect(body.msg).toBe("Bad request")
+      });
+  });
+  test("400: tests that when given a none integer limit value that a 400 error will be returned ", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=twelve")
+      .expect(400)
+      .then(({ body }) => {
+       expect(body.msg).toBe("Bad request")
+      });
+  });
+  test("400: tests that when given a none integer p value that a 400 error will be returned ", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=three")
+      .expect(400)
+      .then(({ body }) => {
+       expect(body.msg).toBe("Bad request")
+      });
+  });
+  test("400: tests that when given an empty limit value that a 400 error will be returned ", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=")
+      .expect(400)
+      .then(({ body }) => {
+       expect(body.msg).toBe("Bad request")
+      });
+  });
+  test("400: tests that when given an empty p value that a 400 error will be returned ", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=")
+      .expect(400)
+      .then(({ body }) => {
+       expect(body.msg).toBe("Bad request")
+      });
+  });
+    
 })
 
 describe("GET/api/articles/:article_id", () => {

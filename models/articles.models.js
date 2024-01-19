@@ -19,7 +19,10 @@ exports.retrieveArticle = (article_id) => {
 exports.retrieveAllArticles = async (topic_query, sort_by, order, limit, p) => {
 
     if(limit === undefined) limit = 10; 
-    if(p === undefined) p = 1 ;
+    if(p === undefined) p = 1;
+    if (!/^[1-9]\d*$/.test(limit) || !/^[1-9]\d*$/.test(p)){
+        return Promise.reject({status: 400, msg: "400: Bad Request"})
+    }
     if(order === undefined){
         order = "desc"
     } if(order === ""){
@@ -56,15 +59,8 @@ exports.retrieveAllArticles = async (topic_query, sort_by, order, limit, p) => {
     return db.query(queryStr, queryArray)
     .then(async ({rows}) =>  {
         if (rows.length === 0){
-            if(limit <= 0 || limit % 1 !==0){
-                return Promise.reject({status: 400, msg: "400: Bad Request"})
-            }
             return Promise.reject({status: 404, msg: "404: page not found"})
-        }
-        if (/\./.test(limit) || /\./.test(p)){
-            return Promise.reject({status: 400, msg: "400: Bad Request"})
-        }
-        
+        }        
         const total_count =  await getArticleCount(topic_query)
 
         return {articles: rows , total_count}

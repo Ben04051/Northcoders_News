@@ -52,8 +52,8 @@
     }
   },
   "GET /api/articles/:article_id/comments": {
-    "description": "serves all comments for an article given an article_id sorted by newest first",
-    "queries": [],
+    "description": "serves all comments for an article given an article_id sorted by newest first and paginated with a default of page 1 and limit of 10- these can be changed in the queries",
+    "queries": ["limit", "p"],
     "format": "object array",
     "exampleResponse": [
       {

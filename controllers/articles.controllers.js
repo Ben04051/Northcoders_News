@@ -12,19 +12,16 @@ exports.getArticle = (req, res, next) => {
 
 exports.getAllArticles = (req, res, next) => {
     const {topic_query, sort_by, order, limit, p} = req.query
-    const getArticles = retrieveAllArticles(topic_query, sort_by, order, limit, p)
-    const queries = [getArticles]
 
-    if(topic_query || topic_query === "") {
-        const topicCheck = checkTopicExists(topic_query)
-        queries.push(topicCheck)
-    }
-
-    Promise.all(queries).then((response) => {
-        res.status(200).send(response[0])
+    return checkTopicExists(topic_query).then(() => {
+        return retrieveAllArticles(topic_query, sort_by, order, limit, p)
+    }).then((response) => {
+        res.status(200).send(response)
     }).catch((err) => {
         next(err)
     })
+
+ 
 }
 
 exports.updateArticleVotes = (req, res, next) => {
