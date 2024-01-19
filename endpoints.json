@@ -75,6 +75,33 @@
 
     ]
     },
+    "GET /api/users": {
+      "description": "serves an array of all users",
+      "queries": [],
+      "format": "array object",
+      "exampleResponse": {
+        "users": [
+          {
+            "username": "icellusedkars",
+            "name": "sam",
+            "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
+          }
+        ]
+      }
+    },
+    "GET /api/users/:username": {
+      "description": "serves a user object given their username",
+      "queries": [],
+      "format": "object",
+      "exampleResponse": {
+        "users": 
+          {
+            "username": "icellusedkars",
+            "name": "sam",
+            "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
+          }
+      }
+    },
     "POST /api/articles/:article_id/comments": {
       "description": "posts a comment for an article given an article_id, the post body contains username and body key value pairs as strings",
       "queries": [],
@@ -89,6 +116,46 @@
           "created_at": "2020-04-14T20:19:00.000Z"
         }
       },
+      "POST /api/articles": {
+        "description": "adds a new article based on the body passed, body takes the properties author, title, body topic, article_img_url(optional)",
+        "queries": [],
+        "format": "object",
+        "exampleResponse":   {
+          "article": {
+            "article_id": 14,
+            "title": "Post request success",
+            "topic": "mitch",
+            "author": "butter_bridge",
+            "body": "This article was posted to the articles table using a post request!",
+            "created_at": "2024-01-19T22:13:14.977Z",
+            "votes": 0,
+            "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            "comment_count": 0
+          }
+        }
+    },
+    "POST /api/topics": {
+      "description": "adds a new topic to the topics table when given a slug and description in the body and responds with the newly added topic",
+      "queries": [],
+      "format": "object",
+      "exampleResponse": {
+        "topics": [{ "slug": "football", "description": "Footie!" }]
+      }
+
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "updates the votes for an comment by the amount passed in the body in the format {inc_votes: newVote}",
+    "queries": [],
+    "format": "object",
+    "exampleResponse":  {
+      "comment_id": 8,
+      "body": "Delicious crackerbreads",
+      "article_id": 1,
+      "author": "icellusedkars",
+      "votes": 0,
+      "created_at": "2020-04-14T20:19:00.000Z"
+    }
+    }, 
       "PATCH /api/articles/:article_id": {
         "description": "updates the votes for an article by the amount passed in the body in the format {inc_votes: newVote}",
         "queries": [],
@@ -110,73 +177,8 @@
         "format": "",
         "exampleResponse": ""
         }, 
-      "GET /api/users": {
-        "description": "serves an array of all users",
-        "queries": [],
-        "format": "array object",
-        "exampleResponse": {
-          "users": [
-            {
-              "username": "icellusedkars",
-              "name": "sam",
-              "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
-            }
-          ]
-        }
-      },
-      "GET /api/users/:username": {
-        "description": "serves a user object given their username",
-        "queries": [],
-        "format": "object",
-        "exampleResponse": {
-          "users": 
-            {
-              "username": "icellusedkars",
-              "name": "sam",
-              "avatar_url": "https://avatars2.githubusercontent.com/u/24604688?s=460&v=4"
-            }
-        }
-      }, 
-      "PATCH /api/comments/:comment_id": {
-        "description": "updates the votes for an comment by the amount passed in the body in the format {inc_votes: newVote}",
-        "queries": [],
-        "format": "object",
-        "exampleResponse":  {
-          "comment_id": 8,
-          "body": "Delicious crackerbreads",
-          "article_id": 1,
-          "author": "icellusedkars",
-          "votes": 0,
-          "created_at": "2020-04-14T20:19:00.000Z"
-        }
-        },
-        "POST /api/articles": {
-          "description": "adds a new article based on the body passed, body takes the properties author, title, body topic, article_img_url(optional)",
-          "queries": [],
-          "format": "object",
-          "exampleResponse":   {
-            "article": {
-              "article_id": 14,
-              "title": "Post request success",
-              "topic": "mitch",
-              "author": "butter_bridge",
-              "body": "This article was posted to the articles table using a post request!",
-              "created_at": "2024-01-19T22:13:14.977Z",
-              "votes": 0,
-              "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-              "comment_count": 0
-            }
-          }
-      },
-      "POST /api/topics": {
-        "description": "adds a new topic to the topics table when given a slug and description in the body and responds with the newly added topic",
-        "queries": [],
-        "format": "object",
-        "exampleResponse": {
-          "topics": [{ "slug": "football", "description": "Footie!" }]
-        }
-
-    }, 
+       
+     
     "DELETE /api/articles/:article_id": {
       "description": "deletes an article and all the corresponding its corresponding comments",
       "queries": [],
