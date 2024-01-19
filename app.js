@@ -34,9 +34,18 @@ app.use((err, req, res, next) => {
     }
 })
 app.use((err, req, res, next) => {
+    if (err.code === "23505") {
+        const {detail} = err
+        const errorValue = detail.match(/(?<=\()(.*)(?=\)=)/g)
+        res.status(409).send({msg: `409: ${errorValue} already in use`})
+    } else {
+        next(err)
+    }
+})
+app.use((err, req, res, next) => {
     res.status(500).send({msg: "developer error"})
 })
 
-
+// /(?<=\()(.*)(?=\)=)/
 
 module.exports = app

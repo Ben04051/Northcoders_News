@@ -748,7 +748,7 @@ describe("PATCH/api/comments/:comment_id", () => {
   });
 })
 
-describe('POST/api/articles/', () => {
+describe('POST/api/articles', () => {
   test('201: inserts a new article to the list of articles', () => {
     const articleToAdd = {
       author: "butter_bridge",
@@ -883,5 +883,61 @@ return request(app)
 .then(({body}) => {
       expect(body.msg).toBe("Bad request")
   });
+});
+})
+
+describe('POST/api/topics', () => {
+  test('201: inserts a new topic to the list of topics', () => {
+    const topicToAdd = {
+      slug: "new slug",
+      description: "new description"
+    }
+    return request(app)
+    .post("/api/topics/")
+    .send(topicToAdd)
+    .expect(201)
+    .then(({body}) => {
+      const {topic} = body
+      expect(topic.slug).toBe("new slug")
+      expect(topic.description).toBe("new description")
+    }) 
+  })
+test("201: test that when description is missing from the post request that a Bad request error is returned", () => {
+  const topicToAdd = {
+    slug: "second slug"
+  }    
+return request(app)
+.post("/api/topics/")
+.send(topicToAdd)
+.expect(201)
+.then(({body}) => {
+  const {topic} = body
+  expect(topic.slug).toBe("second slug")
+  expect(topic.description).toBe(null)
+  });
+});
+test("409: test that when a duplicate slug is used that a 409 conflict error is returned", () => {
+  const topicToAdd = {
+    slug: "second slug"
+  }    
+return request(app)
+.post("/api/topics/")
+.send(topicToAdd)
+.expect(409)
+.then(({body}) => {
+  expect(body.msg).toBe(`409: slug already in use`)
+  });
+});
+test("400: test that when slug is missing from the post request that a Bad request error is returned", () => {
+  const topicToAdd = {
+    description: "new description"
+  }    
+return request(app)
+.post("/api/topics/")
+.send(topicToAdd)
+.expect(400)
+.then(({body}) => {
+  expect(body.msg).toBe("Bad request")
+});
 });
 })
