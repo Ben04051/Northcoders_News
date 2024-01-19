@@ -176,7 +176,13 @@
           "topics": [{ "slug": "football", "description": "Footie!" }]
         }
 
-    }
+    }, 
+    "DELETE /api/articles/:article_id": {
+      "description": "deletes an article and all the corresponding its corresponding comments",
+      "queries": [],
+      "format": "",
+      "exampleResponse": ""
+      }
   }
   
 

@@ -645,30 +645,6 @@ describe("PATCH/api/articles/:article_id", () => {
   });
 })
 
-describe("DELETE/api/comments/:comment_id", () => {
-  test("204: test that when given a valid id that the comment is removed", () => {
-    return request(app)
-    .delete("/api/comments/2")
-    .expect(204) 
-  })
-  test("404: test that when given a valid but out of range comment_id that \"404: not found\" is returned", () => {
-    return request(app)
-    .delete("/api/comments/99")
-    .expect(404)
-    .then(({body}) => {
-          expect(body.msg).toBe("404: comment not found")
-      });
-  });
-  test("400: test that when given an invalid comment_id that Bad request is returned", () => {    
-    return request(app)
-    .patch("/api/articles/notavalidcommentid")
-    .expect(400)
-    .then(({body}) => {
-          expect(body.msg).toBe("Bad request")
-      });
-  });
-
-})
 
 describe("PATCH/api/comments/:comment_id", () => {
   test("200: test that when given a patch request with a comment and a body containing a number of votes that the comment's votes will be updated", () => {
@@ -940,4 +916,64 @@ return request(app)
   expect(body.msg).toBe("Bad request")
 });
 });
+})
+
+describe("DELETE/api/comments/:comment_id", () => {
+  test("204: test that when given a valid id that the comment is removed", () => {
+    return request(app)
+    .delete("/api/comments/2")
+    .expect(204) 
+  })
+  test("404: test that when given a valid but out of range comment_id that \"404: not found\" is returned", () => {
+    return request(app)
+    .delete("/api/comments/99")
+    .expect(404)
+    .then(({body}) => {
+          expect(body.msg).toBe("404: comment not found")
+      });
+  });
+  test("400: test that when given an invalid comment_id that Bad request is returned", () => {    
+    return request(app)
+    .patch("/api/articles/notavalidcommentid")
+    .expect(400)
+    .then(({body}) => {
+          expect(body.msg).toBe("Bad request")
+      });
+  });
+
+})
+
+describe("DELETE/api/articles/:article_id", () => {
+  test("204: test that when given a valid id that the article is removed", () => {
+    return request(app)
+    .delete("/api/articles/2")
+    .expect(204) 
+  })
+  test("204: test that all the comments for an article are deleted", () => {
+    return request(app)
+    .delete("/api/articles/3")
+    .expect(204).then(() => {
+      return db.query(`SELECT FROM comments
+        WHERE article_id = 3`)
+    }).then(({rowCount}) => {
+      expect(rowCount).toBe(0)
+    }) 
+  })
+  test("404: test that when given a valid but out of range article_id that \"404: not found\" is returned", () => {
+    return request(app)
+    .delete("/api/articles/99")
+    .expect(404)
+    .then(({body}) => {
+          expect(body.msg).toBe("404: article not found")
+      });
+  });
+  test("400: test that when given an invalid article_id that Bad request is returned", () => {    
+    return request(app)
+    .patch("/api/articles/notavalidarticleid")
+    .expect(400)
+    .then(({body}) => {
+          expect(body.msg).toBe("Bad request")
+      });
+  });
+
 })
