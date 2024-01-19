@@ -15,8 +15,8 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all articles with body removed and comment_count added- sorted by age in descending order by default but can be sorted by specified columns with a sort_by query and can be set to ascending order using the order query. Can be queried by topic to only select articles relating to a specific topic",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "description": "serves an array of all articles with body removed and comment_count added- sorted by age in descending order by default but can be sorted by specified columns with a sort_by query and can be set to ascending order using the order query. Can be queried by topic to only select articles relating to a specific topic. Includes pagination with the default limit set to 10 and the default page set to 1 but these can be passed as queries to change them.",
+    "queries": ["author", "topic", "sort_by", "order", "limit", "p"],
     "format": "array object",
     "exampleResponse": {
       "articles": [
@@ -149,7 +149,26 @@
           "votes": 0,
           "created_at": "2020-04-14T20:19:00.000Z"
         }
-        }
+        },
+        "POST /api/articles": {
+          "description": "adds a new article based on the body passed, body takes the properties author, title, body topic, article_img_url(optional)",
+          "queries": [],
+          "format": "object",
+          "exampleResponse":   {
+            "article": {
+              "article_id": 14,
+              "title": "Post request success",
+              "topic": "mitch",
+              "author": "butter_bridge",
+              "body": "This article was posted to the articles table using a post request!",
+              "created_at": "2024-01-19T22:13:14.977Z",
+              "votes": 0,
+              "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+              "comment_count": 0
+            }
+          }
       }
+
+    }
   
 

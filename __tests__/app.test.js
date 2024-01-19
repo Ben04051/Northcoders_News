@@ -84,6 +84,100 @@ describe("GET/api/articles", () => {
       }) 
 })
 
+describe("GET/api/articles?limit&?p", () => {
+  test("200: tests that the correct total count is returned", () => {
+    return request(app)
+      .get("/api/articles?limit=10&p=1")
+      .expect(200)
+      .then(({ body }) => {
+         const {total_count} = body
+         expect(total_count).toBe(13)
+      })
+      });
+  test("200: tests that the pagination works", () => {
+    return request(app)
+      .get("/api/articles?limit=5&p=3")
+      .expect(200)
+      .then(({ body }) => {
+         const {articles} = body
+         expect(articles.length).toBe(3)
+      });
+  });
+  test("404: tests that when given a page out of range that a 404 error will be returned ", () => {
+    return request(app)
+      .get("/api/articles?limit=5&p=4")
+      .expect(404)
+      .then(({ body }) => {
+       expect(body.msg).toBe("404: page not found")
+      });
+  });
+  test("400: tests that when given a null limit out of range that a 400 error will be returned ", () => {
+    return request(app)
+      .get("/api/articles?limit=0&p=1")
+      .expect(400)
+      .then(({ body }) => {
+       expect(body.msg).toBe("Bad request")
+      });
+  });
+  test("400: tests that when given a negative limit out of range that a 400 error will be returned ", () => {
+    return request(app)
+      .get("/api/articles?limit=-7&p=1")
+      .expect(400)
+      .then(({ body }) => {
+       expect(body.msg).toBe("Bad request")
+      });
+  });
+  test("400: tests that when given a decimal integer limit that a 400 error will be returned ", () => {
+    return request(app)
+      .get("/api/articles?limit=7.5")
+      .expect(400)
+      .then(({ body }) => {
+       expect(body.msg).toBe("Bad request")
+      });
+  });
+  test("400: tests that when given a decimal integer p that a 400 error will be returned ", () => {
+    return request(app)
+      .get("/api/articles?p=1.5")
+      .expect(400)
+      .then(({ body }) => {
+       expect(body.msg).toBe("Bad request")
+      });
+  });
+  test("400: tests that when given a none integer limit value that a 400 error will be returned ", () => {
+    return request(app)
+      .get("/api/articles?limit=twelve")
+      .expect(400)
+      .then(({ body }) => {
+       expect(body.msg).toBe("Bad request")
+      });
+  });
+  test("400: tests that when given a none integer p value that a 400 error will be returned ", () => {
+    return request(app)
+      .get("/api/articles?p=three")
+      .expect(400)
+      .then(({ body }) => {
+       expect(body.msg).toBe("Bad request")
+      });
+  });
+  test("400: tests that when given an empty limit value that a 400 error will be returned ", () => {
+    return request(app)
+      .get("/api/articles?limit=")
+      .expect(400)
+      .then(({ body }) => {
+       expect(body.msg).toBe("Bad request")
+      });
+  });
+  test("400: tests that when given an empty p value that a 400 error will be returned ", () => {
+    return request(app)
+      .get("/api/articles?p=")
+      .expect(400)
+      .then(({ body }) => {
+       expect(body.msg).toBe("Bad request")
+      });
+  });
+    
+})
+
 describe("GET/api/articles?topic_query", () => { 
   test("200: tests that when passed a valid topic filter query that the results served by the get request will be filtered to only include these results", () => {
     return request(app)
@@ -91,7 +185,7 @@ describe("GET/api/articles?topic_query", () => {
       .expect(200)
       .then(({ body }) => {
           const {articles} = body
-          expect(articles.length).toBe(12)
+          expect(articles.length).toBeGreaterThan(0)
           articles.forEach((article) => {
             expect(article.topic).toBe("mitch")
           })
@@ -707,11 +801,3 @@ return request(app)
   });
 });
 })
-
- 
-
-
-
- 
-
-

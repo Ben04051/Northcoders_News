@@ -27,3 +27,14 @@ exports.getAllColumnNames = (table) => {
 
 }
 
+exports.getArticleCount = (topic_query) =>  {
+    let query = `SELECT * FROM articles`
+    const values = []
+    if (topic_query){
+        query += ` WHERE topic = $1`
+        values.push(topic_query)
+    }   
+    return db.query(query,values).then((result) => {
+        return result.rowCount
+    })
+ }

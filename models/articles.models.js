@@ -1,6 +1,6 @@
 const db = require("../db/connection")
 const { includes } = require("../db/data/test-data/articles")
-const {getAllColumnNames} = require("../utils")
+const {getAllColumnNames, getArticleCount} = require("../utils")
 
 exports.retrieveArticle = (article_id) => {
  
@@ -16,8 +16,10 @@ exports.retrieveArticle = (article_id) => {
     })
 }
 
-exports.retrieveAllArticles = async (topic_query, sort_by, order) => {
+exports.retrieveAllArticles = async (topic_query, sort_by, order, limit, p) => {
 
+    if(limit === undefined) limit = 10; 
+    if(p === undefined) p = 1 ;
     if(order === undefined){
         order = "desc"
     } if(order === ""){
@@ -47,9 +49,25 @@ exports.retrieveAllArticles = async (topic_query, sort_by, order) => {
         queryStr += ` ORDER BY articles.created_at ${order}`
     }
 
+    const offset = (p-1) * limit
+
+    queryStr += ` LIMIT ${limit} OFFSET ${offset} `
+    
     return db.query(queryStr, queryArray)
-    .then(({rows}) => {
-        return rows
+    .then(async ({rows}) =>  {
+        if (rows.length === 0){
+            if(limit <= 0 || limit % 1 !==0){
+                return Promise.reject({status: 400, msg: "400: Bad Request"})
+            }
+            return Promise.reject({status: 404, msg: "404: page not found"})
+        }
+        if (/\./.test(limit) || /\./.test(p)){
+            return Promise.reject({status: 400, msg: "400: Bad Request"})
+        }
+        
+        const total_count =  await getArticleCount(topic_query)
+
+        return {articles: rows , total_count}
     })
 
 }
