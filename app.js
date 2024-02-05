@@ -1,8 +1,11 @@
 const express = require("express")
+const cors = require('cors');
 const {handleIncorrectPath} = require("./controllers/endpoint.controllers") 
 const apiRouter = require('./routes/api-router')
 
 const app = express()
+
+app.use(cors())
 
 app.use(express.json())
 
