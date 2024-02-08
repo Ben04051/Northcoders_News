@@ -47,10 +47,15 @@ exports.retrieveAllArticles = async (topic_query, sort_by, order, limit, p) => {
         if(!columns.includes(sort_by)){
             return Promise.reject({status: 404, msg: "404: column not found"})
         }
+        if (sort_by === "comment_count"){
+        queryStr += ` ORDER BY ${sort_by} ${order}`
+        }else{
         queryStr += ` ORDER BY articles.${sort_by} ${order}`
+        }
     } else{
         queryStr += ` ORDER BY articles.created_at ${order}`
     }
+
 
     const offset = (p-1) * limit
 

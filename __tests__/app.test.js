@@ -220,6 +220,15 @@ describe("GET requests", () => {
             expect(articles).toBeSortedBy("author", {descending: true})
         });    
     })
+      test("200: tests that when passed a valid topic filter query that the results served by the get request will be filtered to only include these results", () => {
+        return request(app)
+          .get("/api/articles?sort_by=comment_count")
+          .expect(200)
+          .then(({ body }) => {
+            const {articles} = body
+              expect(articles).toBeSortedBy("comment_count", {descending: true})
+          });    
+      })
     test("404: tests that when passed an invalid sort_by query that a 404 error will be returned", () => {
       return request(app)
         .get("/api/articles?sort_by=99asdfnotatopic")
