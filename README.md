@@ -2,6 +2,8 @@
 
 Link to the hosted site: https://northcoders-news-tn61.onrender.com
 
+*Please allow up to 1 minute for the API become operational*
+
 The minimum versions of Node.js and Postgres required are as follows:
 - Node.js v21.1.0
 - psql (PostgreSQL) 14.10
